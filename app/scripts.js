@@ -13,26 +13,30 @@ async function main() {
   request.open('GET', 'https://72vzilaj29.execute-api.eu-west-2.amazonaws.com/dev', true);
   request.onload = async function () {
 
+
     // Begin accessing JSON data here
     var data = JSON.parse(this.response);
     if (request.status >= 200 && request.status < 400) {
-      data.Items.forEach(async item => {
-        const card = document.createElement('div');
-        card.setAttribute('class', 'card');
 
-        const h1 = document.createElement('h1');
-        h1.textContent = item.Serial;
+      const card = document.createElement('div');
+      card.setAttribute('class', 'card');
 
-        var when = await convert(item.date_time);
+      const h1 = document.createElement('h1');
+      const h2 = document.createElement('h2');
+      const h3 = document.createElement('h3');
+      const h4 = document.createElement('h3');
 
-        const p = document.createElement('p');
-        p.textContent = `${item.status} at ${when}`;
+      h1.textContent = data.Items[0].env_values.Device_ID
+      h2.textContent = data.Items[0].env_values.Temperature
+      h3.textContent = data.Items[0].env_values.Humidity
+      h4.textContent = data.Items[0].env_values.Seconds
 
-        container.appendChild(card);
-        card.appendChild(h1);
-        card.appendChild(p);
+      container.appendChild(card);
+      card.appendChild(h1);
+      card.appendChild(h2);
+      card.appendChild(h3);
+      card.appendChild(h4);
 
-      });
     } else {
       const errorMessage = document.createElement('marquee');
       errorMessage.textContent = `Something went wrong`;
@@ -41,36 +45,4 @@ async function main() {
   }
 }
 request.send();
-// end
 
-function convert(unixtimestamp){
- 
-  // Months array
-  var months_arr = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
- 
-  // Convert timestamp to milliseconds
-  var date = new Date(unixtimestamp*1000);
- 
-  // Year
-  var year = date.getFullYear();
- 
-  // Month
-  var month = months_arr[date.getMonth()];
- 
-  // Day
-  var day = date.getDate();
- 
-  // Hours
-  var hours = date.getHours();
- 
-  // Minutes
-  var minutes = "0" + date.getMinutes();
- 
-  // Seconds
-  var seconds = "0" + date.getSeconds();
- 
-  // Display date time in MM-dd-yyyy h:m:s format
-  var convdataTime = month+'-'+day+'-'+year+' '+hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
-  return convdataTime;
-  
- }
